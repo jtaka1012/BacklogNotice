@@ -1,61 +1,60 @@
-## Backlogツール  
-    
-- 概要
+## Backlogツール    
+### 概要  
 Backlogでタスク管理をされている方向けの情報集計プログラムです。
 必要な情報をBacklogのAPIにて集計して、Slackへ通知します。  
   
-- Backlog API  
+### Backlog API  
 https://developer.nulab-inc.com/ja/docs/backlog/  
   
-- 利用システム前提
-  - サーバ　　　： Heroku
-  - 言語　　　　： Python3.6.1
-  - Webサーバ　： Bottle Webサーバ
-  - ライブラリ　： Procfile参照してください
+### 利用システム前提  
+- サーバ　　　： Heroku
+- 言語　　　　： Python3.6.1
+- Webサーバ　： Bottle Webサーバ
+- ライブラリ　： Procfile参照してください
   
-- プログラム構成  (主要部分)
-  - backlogNotice.py (routeプログラム)
-    - shortmeeting: 今日やることを出力  
-    - manhour: 予定と実績のサマリ  
-    - contactsummary: 問い合わせ実績出力  
-      - 月曜日でには、先週１週間の件数サマリ情報が表示される   
-  - backlog.py (その日やることのまとめ)  
-    - プロジェクト単位でグルーピング。さらにその中でマイルストーン毎にグルーピング  
-    - 未着手、着手中、期限切れの3つに分類し、担当者毎にさらにグルーピング  
-    - 担当者未設定の場合は `担当者なし` として表示  
-    - 期限日: 課題名称 を一覧で表示  
-    - 開始時期未設定かつ、期限未設定の場合は通知対象から除外。いずれかが設定されて入れば、時期未設定として通知対象となる  
-  - backlogCommon.py (マイルストーン取得、カテゴリ取得)  
-    - マイルストーン取得時、開始日が設定かつ、本日よりも大きい場合は対象外(時期未到来)
-    - マイルストーンがアーカイブではなく、未到来ではない場合。 
-  - ContactSummary.py (問い合わせ結果の集計)  
-    - プロジェクトと対象種別: ヘッダーとして利用。(プロジェクトID,名称、有効なIssueType(種別))
-    - プロダクトマッピング: プロダクトで、このプロジェクトIDとカテゴリIDとが結びつけられいる。 
-  - datasender.py (API Call)  
-    - Backlogサーバへの通信、Slackへの通知を実施     
-  - ManHour.py (作業時間)  
-    - 前提: タイムゾーンは `Asia/Tokyo`   
-    - 今週見積、 今週実績、 来週見積、　今月見積、　今月実績、　来月見積 の順
-    - 金曜日にCSVでレポート出力
+### プログラム構成  (主要部分)  
+- backlogNotice.py (routeプログラム)
+  - shortmeeting: 今日やることを出力  
+  - manhour: 予定と実績のサマリ  
+  - contactsummary: 問い合わせ実績出力  
+    - 月曜日でには、先週１週間の件数サマリ情報が表示される   
+- backlog.py (その日やることのまとめ)  
+  - プロジェクト単位でグルーピング。さらにその中でマイルストーン毎にグルーピング  
+  - 未着手、着手中、期限切れの3つに分類し、担当者毎にさらにグルーピング  
+  - 担当者未設定の場合は `担当者なし` として表示  
+  - 期限日: 課題名称 を一覧で表示  
+  - 開始時期未設定かつ、期限未設定の場合は通知対象から除外。いずれかが設定されて入れば、時期未設定として通知対象となる  
+- backlogCommon.py (マイルストーン取得、カテゴリ取得)  
+  - マイルストーン取得時、開始日が設定かつ、本日よりも大きい場合は対象外(時期未到来)
+  - マイルストーンがアーカイブではなく、未到来ではない場合。 
+- ContactSummary.py (問い合わせ結果の集計)  
+  - プロジェクトと対象種別: ヘッダーとして利用。(プロジェクトID,名称、有効なIssueType(種別))
+  - プロダクトマッピング: プロダクトで、このプロジェクトIDとカテゴリIDとが結びつけられいる。 
+- datasender.py (API Call)  
+  - Backlogサーバへの通信、Slackへの通知を実施     
+- ManHour.py (作業時間)  
+  - 前提: タイムゾーンは `Asia/Tokyo`   
+  - 今週見積、 今週実績、 来週見積、　今月見積、　今月実績、　来月見積 の順
+  - 金曜日にCSVでレポート出力
   
-- 利用にあたっての事前設定
-  - 環境変数
-    - SLACK_CHANNEL: 問い合わせ用Slackチャンネル名
-    - BACKLOG_API_KEY: BacklogのApiKey
-    - SLACK_CHANNEL_CONTACT: 問い合わせ用のSlackチャンネル名
-    - BACKLOG_BASE_URL: Backlogのエンドポイント
-    - SLACK_API_KEY: Slack用ApiKey
-    - SLACK_CHANNEL_MANAGE: 管理用データを飛ばすのSlackチャンネル
-  - プログラム内定数
-    注) 事前にAPI等で、BacklogのプロジェクトID、種別ID、カテゴリIDを取得しておいてください  
-    - backlog.py
-      - PROJECT_LIST [('PROJECT_ID', 'プロジェクト名')] 
-    - contactSummary
-      - PROJECT_LIST [('PROJECT_ID', 'プロジェクト名(タイトル用)', ['集計対象IssueType(種別)'])]  
-      - PROJECT_MAP ['プロダクト名', [('PROJECT_ID', 'カテゴリID')]]
-        - プロジェクトをまたいでプロダクトの問い合わせ集計が可能となる  
-    - manHour
-      - PROJECT_LIST [('PROJECT_ID', 'プロジェクト名')] 
+### 利用にあたっての事前設定  
+- 環境変数
+  - SLACK_CHANNEL: 問い合わせ用Slackチャンネル名
+  - BACKLOG_API_KEY: BacklogのApiKey
+  - SLACK_CHANNEL_CONTACT: 問い合わせ用のSlackチャンネル名
+  - BACKLOG_BASE_URL: Backlogのエンドポイント
+  - SLACK_API_KEY: Slack用ApiKey
+  - SLACK_CHANNEL_MANAGE: 管理用データを飛ばすのSlackチャンネル
+- プログラム内定数
+  注) 事前にAPI等で、BacklogのプロジェクトID、種別ID、カテゴリIDを取得しておいてください  
+  - backlog.py
+    - PROJECT_LIST [('PROJECT_ID', 'プロジェクト名')] 
+  - contactSummary
+    - PROJECT_LIST [('PROJECT_ID', 'プロジェクト名(タイトル用)', ['集計対象IssueType(種別)'])]  
+    - PROJECT_MAP ['プロダクト名', [('PROJECT_ID', 'カテゴリID')]]
+      - プロジェクトをまたいでプロダクトの問い合わせ集計が可能となる  
+  - manHour
+    - PROJECT_LIST [('PROJECT_ID', 'プロジェクト名')] 
     
 ## 利用データ  
 ### プロジェクト  
