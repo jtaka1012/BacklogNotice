@@ -56,6 +56,15 @@ https://developer.nulab-inc.com/ja/docs/backlog/
   - manHour
     - PROJECT_LIST [('PROJECT_ID', 'プロジェクト名')] 
     
+## Slackへの通知イメージ  
+Backlogの無料版を利用してサンプル作成しているため、開始日の設定ができません。  
+そのため、作業時間取得、問い合わせでの時期未設定といった、本来有効な機能が動作しておりません。  
+ご了承ください。  
+  
+![課題](./img/issueToSlack.png)  
+  
+![問い合わせ](./img/contactToSlack.png)  
+  
 ## サンプルデータ  
 ### プロジェクト  
 ```
