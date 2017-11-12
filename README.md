@@ -1,6 +1,6 @@
 ## Backlogツール    
 ### 概要  
-Backlogでタスク管理をされている方向けの情報集計プログラムです。
+Backlogでタスク管理をされている方向けの情報集計プログラムです。  
 必要な情報をBacklogのAPIにて集計して、Slackへ通知します。  
   
 ### Backlog API  
@@ -56,7 +56,7 @@ https://developer.nulab-inc.com/ja/docs/backlog/
   - manHour
     - PROJECT_LIST [('PROJECT_ID', 'プロジェクト名')] 
     
-## 利用データ  
+## サンプルデータ  
 ### プロジェクト  
 ```
 [
