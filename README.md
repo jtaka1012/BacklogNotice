@@ -1,4 +1,4 @@
-## Backlogツール    
+## Backlog情報のSlack通知ツール    
 ### 概要  
 Backlogでタスク管理をされている方向けの情報集計プログラムです。  
 必要な情報をBacklogのAPIにて集計して、Slackへ通知します。  
